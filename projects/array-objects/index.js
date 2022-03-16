@@ -34,15 +34,6 @@ function map(array, fn) {
   return outArray;
 }
 
-// function map(array, fn) {
-//   let outArray = array;
-
-//   for (let i = 0; i < outArray.length; i++) {
-//     outArray[i] = fn(outArray[i]);
-//   }
-//   return outArray;
-// }
-
 /*
  Задание 3:
 
@@ -54,12 +45,8 @@ function map(array, fn) {
  */
 function reduce(array, fn, initial) {
   const isInitial = initial !== undefined;
-  let result;
-  if (!isInitial) {
-    result = array[0];
-  } else {
-    result = initial;
-  }
+  let result = !isInitial ? array[0] : initial;
+
   for (let i = 0 + !isInitial; i < array.length; i++) {
     result = fn(result, array[i], i, array);
   }
