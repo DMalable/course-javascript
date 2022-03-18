@@ -16,7 +16,23 @@
    isAllTrue([1, 2, 3, 4, 5], n => n < 10) // вернет true
    isAllTrue([100, 2, 3, 4, 5], n => n < 10) // вернет false
  */
-function isAllTrue(array, fn) {}
+function isAllTrue(array, fn) {
+  const isEmptyArr = array.length === 0;
+  const isArr = array instanceof Array;
+  const isFn = typeof fn == 'function';
+
+  if (isEmptyArr || !isArr) {
+    throw new Error('empty array');
+  } else if (!isFn) {
+    throw new Error('fn is not a function');
+  }
+
+  let result = true;
+  for (const i of array) {
+    result &&= fn(i);
+  }
+  return result;
+}
 
 /*
  Задание 2:
@@ -34,7 +50,23 @@ function isAllTrue(array, fn) {}
    isSomeTrue([1, 2, 30, 4, 5], n => n > 20) // вернет true
    isSomeTrue([1, 2, 3, 4, 5], n => n > 20) // вернет false
  */
-function isSomeTrue(array, fn) {}
+function isSomeTrue(array, fn) {
+  const isEmptyArr = array.length === 0;
+  const isArr = array instanceof Array;
+  const isFn = typeof fn == 'function';
+
+  if (isEmptyArr || !isArr) {
+    throw new Error('empty array');
+  } else if (!isFn) {
+    throw new Error('fn is not a function');
+  }
+
+  let result = false;
+  for (const i of array) {
+    result ||= fn(i);
+  }
+  return result;
+}
 
 /*
  Задание 3:
@@ -47,7 +79,26 @@ function isSomeTrue(array, fn) {}
  3.3: Необходимо выбрасывать исключение в случаях:
    - fn не является функцией (с текстом "fn is not a function")
  */
-function returnBadArguments(fn, ...args) {}
+function returnBadArguments(fn, ...args) {
+  const isFn = typeof fn == 'function';
+
+  if (!isFn) {
+    throw new Error('fn is not a function');
+  }
+
+  const exeptions = [];
+
+  for (const i of args) {
+    try {
+      fn(i);
+    } catch (e) {
+      exeptions.push(i);
+      console.log(e.message);
+    }
+  }
+
+  return exeptions;
+}
 
 /*
  Задание 4:
@@ -66,7 +117,43 @@ function returnBadArguments(fn, ...args) {}
    - number не является числом (с текстом "number is not a number")
    - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
-function calculator(number = 0) {}
+function calculator(number = 0) {
+  const isNumber = isFinite(number);
+
+  if (!isNumber) {
+    throw new Error('number is not a number');
+  }
+
+  return {
+    sum(...args) {
+      for (const i of args) {
+        number += i;
+      }
+      return number;
+    },
+    dif(...args) {
+      for (const i of args) {
+        number -= i;
+      }
+      return number;
+    },
+    div(...args) {
+      for (const i of args) {
+        if (i === 0) {
+          throw new Error('division by 0');
+        }
+        number /= i;
+      }
+      return number;
+    },
+    mul(...args) {
+      for (const i of args) {
+        number *= i;
+      }
+      return number;
+    },
+  };
+}
 
 /* При решении задач, постарайтесь использовать отладчик */
 
