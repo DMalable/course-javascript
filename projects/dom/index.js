@@ -26,6 +26,7 @@ function createDivWithText(text) {
  */
 function prepend(what, where) {
   where.prepend(what);
+  //where.insertBefore(what, where.firstElementChild);
 }
 
 /*
@@ -54,6 +55,13 @@ function findAllPSiblings(where) {
     resultArr.push(i.previousElementSibling);
   }
   return resultArr;
+
+  // for (const el of where.children) {
+  // if(el.nextElementSibling && el.nextElementSibling.tagname === 'P' ) {
+  //   nextP.push(el)
+  // }
+  // }
+  // return nextP;
 }
 
 /*
@@ -101,6 +109,15 @@ function deleteTextNodes(where) {
       child.remove();
     }
   }
+
+  // for (let i = 0; i < where.childNodes.length; i++) {
+  //   const el = where.childNodes[i];
+
+  //   if (el.nodeType === Element.TEXT_NODE) {
+  //     where.removeChild(el);
+  //     i--;
+  //   }
+  // }
 }
 
 /*
@@ -126,6 +143,17 @@ function deleteTextNodesRecursive(where) {
       deleteTextNodesRecursive(i);
     }
   }
+
+  // for (let i = 0; i < where.childNodes.length; i++) {
+  //   const el = where.childNodes[i];
+
+  //   if (el.nodeType === Element.TEXT_NODE) {
+  //     where.removeChild(el);
+  //     i--;
+  //   } else if (el.nodeType === Element.ELEMENT_NODE) {
+  //     deleteTextNodesRecursive(el);
+  //   }
+  // }
 }
 
 /*
@@ -148,7 +176,73 @@ function deleteTextNodesRecursive(where) {
      texts: 3
    }
  */
-function collectDOMStat(root) {}
+function collectDOMStat(root) {
+  const result = {
+    tags: {},
+    classes: {},
+    texts: 0,
+  };
+
+  const countDOMStat = (root) => {
+    for (const item of root.childNodes) {
+      //texts counting
+      if (item.nodeType === Node.TEXT_NODE) {
+        result.texts++;
+        //tags counting
+      } else if (item.nodeType === Node.ELEMENT_NODE) {
+        if (item.tagName in result.tags) {
+          result.tags[item.tagName]++;
+        } else {
+          result.tags[item.tagName] = 1;
+        }
+        //classes counting
+        for (const className of item.classList) {
+          if (className in result.classes) {
+            result.classes[className]++;
+          } else {
+            result.classes[className] = 1;
+          }
+        }
+
+        if (item.hasChildNodes()) {
+          countDOMStat(item);
+        }
+      }
+    }
+  };
+
+  countDOMStat(root);
+
+  return result;
+}
+
+/* function scan(root) {
+  for (const child of root.childNodes) {
+    if (child.nodeType === Node.TEXT_NODE) {
+      stat.texts++;
+    } else if (child.nodeType === Node.ELEMENT_NODE) {
+      if (child.tagName in stat.tags) {
+        stat.tags[child.tagName]++;
+      } else {
+        stat.tags[child.tagName] = 1;
+      }
+
+      for (const className of child.classList) {
+        if (className in stat.classes) {
+          stat.classes[className]++;
+        } else {
+          stat.classes[className] = 1;
+        }
+      }
+
+      scan(child);
+    }
+  }
+}
+
+scan(root);
+
+return stat; */
 
 /*
  Задание 8 *:
@@ -182,7 +276,23 @@ function collectDOMStat(root) {}
      nodes: [div]
    }
  */
-function observeChildNodes(where, fn) {}
+function observeChildNodes(where, fn) {
+  const observer = new MutationObserver((mutations) => {
+    //for(mutaion of mutations) {}
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'childList') {
+        fn({
+          type: mutation.addedNodes.length ? 'insert' : 'remove',
+          nodes: [
+            ...(mutation.addedNodes.length ? mutation.addedNodes : mutation.removedNodes),
+          ],
+        });
+      }
+    });
+  });
+
+  observer.observe(where, { childList: true, subtree: true });
+}
 
 export {
   createDivWithText,
