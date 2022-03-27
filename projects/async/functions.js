@@ -12,9 +12,10 @@ function delayPromise(seconds) {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve();
-      console.log('resolved');
     }, seconds * 1000);
   });
+  //можно оптимизировать, как в примере:
+  // return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 }
 
 /*
@@ -47,12 +48,7 @@ function loadAndSortTowns() {
     .then((responseJSON) => responseJSON.map((item) => item.name))
     .then((array) => array.sort());
 
-  const result = new Promise((resolve) => {
-    resolve(townsArr);
-  });
-
-  return result;
-  // return townsArr;
+  return townsArr;
 }
 
 export { delayPromise, loadAndSortTowns };
