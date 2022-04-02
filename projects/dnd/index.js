@@ -19,30 +19,44 @@ import './dnd.html';
 
 const homeworkContainer = document.querySelector('#app');
 
-document.addEventListener('mousemove', (e) => {});
+function random(from, to) {
+  return parseInt(from + Math.random() * to - from);
+}
+
+let currentDrag;
+let startX = 0;
+let startY = 0;
+
+document.addEventListener('mousemove', (e) => {
+  if (currentDrag) {
+    currentDrag.style.top = e.clientY - startY + 'px';
+    currentDrag.style.left = e.clientX - startX + 'px';
+  }
+});
 
 export function createDiv() {
   const newDiv = document.createElement('div');
+  //диапазоны для рандомных значений
+  const minSize = 20;
+  const maxSize = 200;
+  const maxColor = 0xffffff;
+
   newDiv.classList.add('draggable-div');
-  newDiv.style.cssText = `
-  width: 100px;
-  height: 30px;
-  top: 50px;
-  left: 50px;
-  background-color: blue;`;
+  newDiv.style.background = '#' + random(0, maxColor).toString(16);
+  newDiv.style.top = random(0, window.innerHeight) + 'px';
+  newDiv.style.left = random(0, window.innerWidth) + 'px';
+  newDiv.style.width = random(minSize, maxSize) + 'px';
+  newDiv.style.height = random(minSize, maxSize) + 'px';
+
+  newDiv.addEventListener('mousedown', (e) => {
+    currentDrag = newDiv;
+    startX = e.offsetX;
+    startY = e.offsetY;
+  });
+  newDiv.addEventListener('mouseup', () => (currentDrag = false));
+
   return newDiv;
 }
-
-// export function createDiv() {
-//   const newDiv = document.createElement('div');
-//   newDiv.classList.add('draggable-div');
-//   newDiv.style.width = '100px';
-//   newDiv.style.height = '30px';
-//   newDiv.style.top = '50px';
-//   newDiv.style.left = '50px';
-//   newDiv.style.backgroundColor = 'blue';
-//   return newDiv;
-// }
 
 const addDivButton = homeworkContainer.querySelector('#addDiv');
 

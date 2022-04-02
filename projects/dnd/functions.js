@@ -83,4 +83,15 @@ function once(target, fn) {
   target.addEventListener('click', innerFn);
 }
 
+// function once(target, fn) {
+//   let already = false;
+
+//   target.addEventListener('click', () => {
+//     if (!already) {
+//       fn();
+//       already = true;
+//     }
+//   });
+// }
+
 export { addListener, removeListener, skipDefault, emulateClick, delegate, once };
