@@ -47,6 +47,50 @@ const listTable = homeworkContainer.querySelector('#list-table tbody');
 
 filterNameInput.addEventListener('input', function () {});
 
-addButton.addEventListener('click', () => {});
+const tableHeaders = homeworkContainer.querySelectorAll('#list-table th');
 
-listTable.addEventListener('click', (e) => {});
+//добавление новой строки по нажатию на кнопку
+addButton.addEventListener('click', () => {
+  document.cookie = `${addNameInput.value}=${addValueInput.value}`;
+
+  const cookies = document.cookie.split('; ').reduce((prev, current) => {
+    const [name, value] = current.split('=');
+    prev[name] = value;
+    return prev;
+  }, {});
+
+  const fragment = document.createDocumentFragment();
+
+  //удаление старого списка
+  listTable.innerHTML = '';
+
+  //формирование нового списка
+  for (const key in cookies) {
+    const newTr = document.createElement('tr');
+    fragment.append(newTr);
+
+    tableHeaders.forEach(() => {
+      const newTd = document.createElement('td');
+      newTr.append(newTd);
+    });
+
+    //кнопка "удалить cookie"
+    const removeButton = document.createElement('button');
+    removeButton.style.width = '60px';
+    removeButton.style.height = '20px';
+    //заполнение ячеек строки
+    newTr.children[0].textContent = key || '';
+    newTr.children[1].textContent = cookies[key] || '';
+    newTr.children[2].append(removeButton);
+  }
+  listTable.append(fragment);
+});
+
+//удаление куки по кнопке
+listTable.addEventListener('click', (e) => {
+  if (e.target.tagName === 'BUTTON') {
+    const cookieName = e.target.closest('tr').firstElementChild.textContent;
+    document.cookie = cookieName + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    e.target.closest('tr').remove();
+  }
+});
